@@ -1,23 +1,43 @@
-import { PluginManifest, Plugin, App } from "obsidian";
+import { PluginManifest, Plugin, App, Notice } from "obsidian";
+import { IssueNoticeSettingsTab } from "./settings";
+import { PluginSettings } from "./interfaces";
 
 export default class SamplePlugin extends Plugin {
+  settings: PluginSettings;
+
+  static defaultSettings: Partial<PluginSettings> = {
+    issueNoticeOnCommands: false
+  };
 
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
   }
 
   onload() {
+    this.loadSettings();
+    this.addSettingTab(new IssueNoticeSettingsTab(this.app, this));
 
-    /**
-     * Adding additional items to the status bar, additional status bar 
-     * items do not appear on mobile as of this writing.
-     */
-    const fruits = this.addStatusBarItem();
-    fruits.createEl("span", { text: "🍎" });
-    fruits.createEl("span", { text: "🍌" });
+    this.addCommand({
+      name: "Plugin Command",
+      id: "plugin-command",
+      checkCallback: (checking: boolean) => {
+        if (checking) return this.settings.issueNoticeOnCommands;
+        if (this.settings.issueNoticeOnCommands) {
+          new Notice("Executed plugin command");
+          return true;
+        }
+        return false;
+      }
+    })
+  }
 
-    const veggies = this.addStatusBarItem();
-    veggies.createEl("span", { text: "🥦" });
-    veggies.createEl("span", { text: "🥬" });
+  async loadSettings() {
+    const data = await this.loadData();
+    const { defaultSettings } = SamplePlugin;
+    this.settings = Object.assign({}, defaultSettings, data);
+  }
+
+  async saveSettings() {
+    await this.saveData(this.settings);
   }
 }
