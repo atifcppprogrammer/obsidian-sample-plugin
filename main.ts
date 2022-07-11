@@ -1,4 +1,4 @@
-import { PluginManifest, Plugin, Notice, App } from "obsidian";
+import { PluginManifest, Plugin, App } from "obsidian";
 
 export default class SamplePlugin extends Plugin {
   constructor(app: App, manifest: PluginManifest) {
@@ -6,6 +6,10 @@ export default class SamplePlugin extends Plugin {
   }
 
   onload() {
-    new Notice("hello ! atifcppprogrammer here !");
+    console.log(`${this.manifest.name} loaded`);
+  }
+
+  onunload() {
+    console.log(`${this.manifest.name} unloaded`);
   }
 }
