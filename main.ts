@@ -6,10 +6,9 @@ export default class SamplePlugin extends Plugin {
   }
 
   onload() {
-    console.log(`${this.manifest.name} loaded`);
-  }
-
-  onunload() {
-    console.log(`${this.manifest.name} unloaded`);
+    this.addRibbonIcon("dice", this.manifest.name, (event: MouseEvent) => {
+      console.log("mouse-event-info", event);
+      console.log("clicked on plugin ribbon icon");
+    });
   }
 }
